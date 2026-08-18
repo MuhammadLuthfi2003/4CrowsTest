@@ -24,7 +24,7 @@ end
 function MatchService:KnitStart()
 	MatchAdapter.StartMatch()
 
-    CrystalAdapter.CrystalSpawned:Connect(function()
+	CrystalAdapter.CrystalSpawned:Connect(function()
 		MatchAdapter.NotifyCrystalSpawned()
 	end)
 

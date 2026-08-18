@@ -24,7 +24,7 @@ local MatchAdapter = {
 }
 
 function MatchAdapter.GetMatch()
-    return match
+    return MatchAdapter.runningMatch
 end
 
 function MatchAdapter.StartMatch()
@@ -47,21 +47,21 @@ function MatchAdapter.StartMatch()
             end
         end
 
-        if MatchPolicy.CanSpawnCrystal(match) then
-            match = MatchRules.AddSpawnedCrystal(match)
+        MatchAdapter.runningMatch = match
+
+        -- Check policy against the committed state, fire only — no count mutation here
+        if MatchPolicy.CanSpawnCrystal(MatchAdapter.runningMatch) then
             MatchAdapter.SpawnCrystal:Fire()
         end
-
-        MatchAdapter.runningMatch = match 
     end)
 end
 
 function MatchAdapter.NotifyCrystalSpawned()
-	match = MatchRules.AddSpawnedCrystal(match)
+	MatchAdapter.runningMatch = MatchRules.AddSpawnedCrystal(MatchAdapter.runningMatch)
 end
 
 function MatchAdapter.NotifyCrystalCollected()
-	match = MatchRules.RemoveSpawnedCrystal(match)
+	MatchAdapter.runningMatch = MatchRules.RemoveSpawnedCrystal(MatchAdapter.runningMatch)
 end
 
 return MatchAdapter
