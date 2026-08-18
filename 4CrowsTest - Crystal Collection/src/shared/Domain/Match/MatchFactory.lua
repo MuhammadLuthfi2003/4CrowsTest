@@ -7,6 +7,7 @@ function MatchFactory.Create(): Types.MatchTypes
 	return {
 		RemainingTime = Config.IntermissionTime,
 		State = "Intermission",
+		CurrentSpawnedCrystals = 0,
 	}
 end
 

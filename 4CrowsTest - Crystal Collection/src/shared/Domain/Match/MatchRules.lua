@@ -1,4 +1,5 @@
 local MatchTypes = require(script.Parent.MatchTypes)
+local MatchConfig = require(script.Parent.MatchConfig)
 
 local MatchRules = {}
 
@@ -7,24 +8,38 @@ local MatchRules = {}
 --   - If State was "Intermission", switches to "Game" with GameplayTime.
 --   - If State was "Game", switches to "Intermission" with IntermissionTime.
 -- Immutable: does not modify the original match table.
-function MatchRules.Tick(
-	match: MatchTypes.MatchTypes,
-	config: MatchTypes.MatchConfigTypes,
-	deltaTime: number
-): MatchTypes.MatchTypes
+function MatchRules.Tick(match: MatchTypes.MatchTypes, deltaTime: number): MatchTypes.MatchTypes
 	local newMatch = table.clone(match)
 	newMatch.RemainingTime = newMatch.RemainingTime - deltaTime
 
 	if newMatch.RemainingTime <= 0 then
 		if newMatch.State == "Intermission" then
 			newMatch.State = "Game"
-			newMatch.RemainingTime = config.GameplayTime
+			newMatch.RemainingTime = MatchConfig.GameplayTime
 		else
 			newMatch.State = "Intermission"
-			newMatch.RemainingTime = config.IntermissionTime
+			newMatch.RemainingTime = MatchConfig.IntermissionTime
 		end
 	end
 
+	return newMatch
+end
+
+function MatchRules.AddSpawnedCrystal(match: MatchTypes.MatchTypes): MatchTypes.MatchTypes
+	local newMatch = table.clone(match)
+	newMatch.CurrentSpawnedCrystals = newMatch.CurrentSpawnedCrystals + 1
+	return newMatch
+end
+
+function MatchRules.RemoveSpawnedCrystal(match: MatchTypes.MatchTypes): MatchTypes.MatchTypes
+	local newMatch = table.clone(match)
+	newMatch.CurrentSpawnedCrystals = newMatch.CurrentSpawnedCrystals - 1
+	return newMatch
+end
+
+function MatchRules.ResetAllCrystals(match: MatchTypes.MatchTypes): MatchTypes.MatchTypes
+	local newMatch = table.clone(match)
+	newMatch.CurrentSpawnedCrystals = 0
 	return newMatch
 end
 

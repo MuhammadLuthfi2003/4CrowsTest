@@ -5,6 +5,7 @@ export type MatchState = "Intermission" | "Game"
 export type MatchTypes = {
 	RemainingTime: number,
 	State: MatchState,
+	CurrentSpawnedCrystals: number,
 }
 
 export type MatchConfigTypes = {
