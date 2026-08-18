@@ -6,6 +6,7 @@ function CrystalFactory.Create(id: string, rarity: Types.CrystalRarity): Types.C
 	return {
 		CrystalId = id,
 		Rarity = rarity,
+		Collected = false,
 	}
 end
 

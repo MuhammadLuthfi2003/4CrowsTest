@@ -6,6 +6,7 @@ function PlayerFactory.Create(playerId: number | string, initialScore: number): 
 	return {
 		PlayerId = playerId,
 		CurrentPoint = initialScore or 0,
+		LastDashTime = 0,
 	}
 end
 

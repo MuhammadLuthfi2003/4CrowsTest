@@ -76,4 +76,20 @@ function PlayerAdapter.ResetScore(userId: number)
 	PlayerAdapter.ScoreChanged:Fire(userId, updated)
 end
 
+function PlayerAdapter.TryDash(userId: number): boolean
+	local current = players[userId]
+	if not current then return false end
+
+	local currentTime = os.clock()
+	if not PlayerPolicy.CanDash(current, currentTime) then
+		return false
+	end
+
+	local updated = PlayerRules.Dash(current, currentTime)
+	players[userId] = updated
+	PlayerAdapter.DashUsed:Fire(userId, updated)
+
+	return true
+end
+
 return PlayerAdapter

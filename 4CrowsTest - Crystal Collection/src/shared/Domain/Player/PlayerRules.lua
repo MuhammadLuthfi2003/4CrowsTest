@@ -19,4 +19,12 @@ function PlayerRules.ResetScore(player: PlayerTypes.Player): PlayerTypes.Player
 	return newPlayer
 end
 
+-- Returns a new Player model with LastDashTime set to the given timestamp.
+-- Immutable: does not modify the original player table.
+function PlayerRules.Dash(player: PlayerTypes.Player, currentTime: number): PlayerTypes.Player
+	local newPlayer = table.clone(player)
+	newPlayer.LastDashTime = currentTime
+	return newPlayer
+end
+
 return PlayerRules
