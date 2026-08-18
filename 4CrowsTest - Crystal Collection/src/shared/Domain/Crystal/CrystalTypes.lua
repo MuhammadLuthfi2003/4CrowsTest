@@ -9,6 +9,7 @@ export type CrystalTypes = {
 export type CrystalDefinitionTypes = {
 	Rarity: CrystalRarity,
 	Score: number,
+	SpawnRate: number,
 }
 
 return nil

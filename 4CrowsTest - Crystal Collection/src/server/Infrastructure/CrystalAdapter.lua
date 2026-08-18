@@ -16,19 +16,23 @@ local CrystalDefinition = require(CrystalDomain.CrystalDefinition)
 
 local CrystalAdapter = {}
 
+local CRYSTAL_DIRECTORY = ReplicatedStorage:WaitForChild("Crystals")
+
 -- 1. Own the mutable state: model + instance + Trove per crystalId
 local crystals: { [string]: any } = {}
 local instances: { [string]: Instance } = {}
 local troves: { [string]: any } = {}
 
 CrystalAdapter.CrystalCollected = Signal.new() -- (crystalId, rarity, playerWhoCollected)
+CrystalAdapter.CrystalSpawned = Signal.new()
 
 -- 2. Spawn: create model, create world instance, wire pickup detection
-function CrystalAdapter.SpawnCrystal(rarity: Types.CrystalRarity, cframe: CFrame): string
+function CrystalAdapter.SpawnCrystal(cframe: CFrame, rarity: Types.CrystalRarity?): string
+	rarity = rarity or CrystalAdapter.PickRandomRarity()
 	local crystal = CrystalFactory.Create(HttpService:GenerateGUID(false), rarity)
 	local trove = Trove.new()
 
-	local instance = trove:Add(ReplicatedStorage.Assets.Crystal:Clone()) -- adjust to your asset path
+	local instance = trove:Add(CRYSTAL_DIRECTORY:WaitForChild(rarity, 10):Clone()) -- adjust to your asset path
 	instance.CFrame = cframe
 	instance.Parent = workspace
 	CollectionService:AddTag(instance, "Crystal")
@@ -49,6 +53,7 @@ function CrystalAdapter.SpawnCrystal(rarity: Types.CrystalRarity, cframe: CFrame
 	instances[crystal.CrystalId] = instance
 	troves[crystal.CrystalId] = trove
 
+    CrystalAdapter.CrystalSpawned:Fire(crystal.CrystalId)
 	return crystal.CrystalId
 end
 
@@ -75,6 +80,28 @@ function CrystalAdapter.GetAllCrystalIds(): { string }
 		table.insert(ids, id)
 	end
 	return ids
+end
+
+-- Picks a random rarity, weighted by each definition's SpawnRate.
+-- SpawnRates don't need to sum to 100 — they're treated as relative weights.
+function CrystalAdapter.PickRandomRarity(): Types.CrystalRarity
+	local totalWeight = 0
+	for _, def in CrystalDefinition do
+		totalWeight += def.SpawnRate
+	end
+
+	local roll = math.random() * totalWeight
+	local cumulative = 0
+
+	for rarity, def in CrystalDefinition do
+		cumulative += def.SpawnRate
+		if roll < cumulative then
+			return rarity
+		end
+	end
+
+	-- fallback in case of floating point edge case at the boundary
+	return "Common"
 end
 
 return CrystalAdapter

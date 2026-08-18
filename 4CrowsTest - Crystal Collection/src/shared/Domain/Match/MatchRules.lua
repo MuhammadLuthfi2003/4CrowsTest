@@ -32,10 +32,11 @@ function MatchRules.Tick(match: MatchTypes.MatchTypes, deltaTime: number): Match
 end
 
 function MatchRules.AddSpawnedCrystal(match: MatchTypes.MatchTypes): MatchTypes.MatchTypes
+	if not MatchPolicy.CanSpawnCrystal(match) then
+		return match  -- return unchanged, never nil
+	end
+
 	local newMatch = table.clone(match)
-
-	if not MatchPolicy.CanSpawnCrystal(match) then return newMatch end
-
 	newMatch.CurrentSpawnedCrystals = newMatch.CurrentSpawnedCrystals + 1
 	newMatch.TimeSinceLastCrystalSpawn = 0
 	return newMatch

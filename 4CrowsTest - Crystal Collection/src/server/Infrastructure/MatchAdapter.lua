@@ -19,41 +19,49 @@ local MatchAdapter = {
 
     OnGameStarted = Signal.new(),
     OnGameFinished = Signal.new(),
+    StateChanged = Signal.new(),
     SpawnCrystal = Signal.new(),
 }
 
+function MatchAdapter.GetMatch()
+    return match
+end
+
 function MatchAdapter.StartMatch()
-    -- create the match
     MatchAdapter.runningMatch = MatchFactory.Create()
 
-    -- create the connection
     MatchAdapter.connection = RunService.Heartbeat:Connect(function(deltaTime)
-		local previousState = match.State
+        local match = MatchAdapter.runningMatch
+        local previousState = match.State
 
-		-- 2. Advance the timer/state via the pure rules module
-		match = MatchRules.Tick(match, deltaTime)
+        match = MatchRules.Tick(match, deltaTime)
 
-		-- 3. React to a state transition (Intermission <-> Game)
-		if match.State ~= previousState then
-			match = MatchRules.ResetAllCrystals(match)
+        if match.State ~= previousState then
+            match = MatchRules.ResetAllCrystals(match)
+            MatchAdapter.StateChanged:Fire()
 
-            if (match.State == "Intermission") then
+            if match.State == "Intermission" then
                 MatchAdapter.OnGameFinished:Fire()
-            elseif (match.State == "Game") then
+            elseif match.State == "Game" then
                 MatchAdapter.OnGameStarted:Fire()
             end
-		end
+        end
 
-		-- 4. Ask Policy whether spawning is currently allowed, then apply via Rules
-		if MatchPolicy.CanSpawnCrystal(match) then
-			match = MatchRules.AddSpawnedCrystal(match)
-			-- TODO: actually instantiate the crystal in the world and
-			-- CollectionService:AddTag(crystalInstance, "Crystal")
+        if MatchPolicy.CanSpawnCrystal(match) then
+            match = MatchRules.AddSpawnedCrystal(match)
             MatchAdapter.SpawnCrystal:Fire()
-		end
+        end
+
+        MatchAdapter.runningMatch = match 
     end)
 end
 
+function MatchAdapter.NotifyCrystalSpawned()
+	match = MatchRules.AddSpawnedCrystal(match)
+end
 
+function MatchAdapter.NotifyCrystalCollected()
+	match = MatchRules.RemoveSpawnedCrystal(match)
+end
 
 return MatchAdapter
