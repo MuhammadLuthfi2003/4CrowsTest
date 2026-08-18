@@ -6,6 +6,7 @@ export type MatchTypes = {
 	RemainingTime: number,
 	State: MatchState,
 	CurrentSpawnedCrystals: number,
+	TimeSinceLastCrystalSpawn:number,
 }
 
 export type MatchConfigTypes = {

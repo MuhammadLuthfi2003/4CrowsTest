@@ -1,5 +1,7 @@
 local MatchTypes = require(script.Parent.MatchTypes)
 local MatchConfig = require(script.Parent.MatchConfig)
+local MatchQuery = require(script.Parent.MatchQuery)
+local MatchPolicy = require(script.Parent.MatchPolicy)
 
 local MatchRules = {}
 
@@ -11,6 +13,10 @@ local MatchRules = {}
 function MatchRules.Tick(match: MatchTypes.MatchTypes, deltaTime: number): MatchTypes.MatchTypes
 	local newMatch = table.clone(match)
 	newMatch.RemainingTime = newMatch.RemainingTime - deltaTime
+
+	if MatchQuery.IsMatchActive(match) then
+		newMatch.TimeSinceLastCrystalSpawn += deltaTime
+	end
 
 	if newMatch.RemainingTime <= 0 then
 		if newMatch.State == "Intermission" then
@@ -27,7 +33,11 @@ end
 
 function MatchRules.AddSpawnedCrystal(match: MatchTypes.MatchTypes): MatchTypes.MatchTypes
 	local newMatch = table.clone(match)
+
+	if not MatchPolicy.CanSpawnCrystal(match) then return newMatch end
+
 	newMatch.CurrentSpawnedCrystals = newMatch.CurrentSpawnedCrystals + 1
+	newMatch.TimeSinceLastCrystalSpawn = 0
 	return newMatch
 end
 
@@ -37,9 +47,11 @@ function MatchRules.RemoveSpawnedCrystal(match: MatchTypes.MatchTypes): MatchTyp
 	return newMatch
 end
 
+-- called when there is a state change
 function MatchRules.ResetAllCrystals(match: MatchTypes.MatchTypes): MatchTypes.MatchTypes
 	local newMatch = table.clone(match)
 	newMatch.CurrentSpawnedCrystals = 0
+	newMatch.TimeSinceLastCrystalSpawn = 0
 	return newMatch
 end
 

@@ -4,7 +4,7 @@ local PlayerFactory = {}
 
 function PlayerFactory.Create(playerId: number | string, initialScore: number): Types.Player
 	return {
-		playerId = playerId,
+		PlayerId = playerId,
 		CurrentPoint = initialScore or 0,
 	}
 end

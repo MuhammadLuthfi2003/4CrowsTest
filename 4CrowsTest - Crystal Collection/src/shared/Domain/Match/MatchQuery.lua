@@ -14,4 +14,8 @@ function MatchQuery.GetRemainingTime(match: MatchTypes.MatchTypes): number
 	return match.RemainingTime
 end
 
+function MatchQuery.GetTimeSinceLastCrystalSpawn(match: MatchTypes.MatchTypes): number
+	return match.TimeSinceLastCrystalSpawn
+end
+
 return MatchQuery
