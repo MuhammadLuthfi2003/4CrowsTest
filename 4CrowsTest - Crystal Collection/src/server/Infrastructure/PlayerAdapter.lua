@@ -58,6 +58,26 @@ function PlayerAdapter.GetPlayer(userId: number)
 	return players[userId]
 end
 
+-- Returns the top `count` players sorted by CurrentPoint descending, as
+-- { { UserId = number, Model = playerModel }, ... }
+function PlayerAdapter.GetTopPlayers(count: number)
+	local list = {}
+	for userId, model in players do
+		table.insert(list, { UserId = userId, Model = model })
+	end
+
+	table.sort(list, function(a, b)
+		return a.Model.CurrentPoint > b.Model.CurrentPoint
+	end)
+
+	local top = {}
+	for i = 1, math.min(count, #list) do
+		table.insert(top, list[i])
+	end
+
+	return top
+end
+
 -- 4. Writes: delegate to Rules, replace stored model, fire signal
 function PlayerAdapter.AddScore(userId: number, crystalDef, match)
 	local current = players[userId]

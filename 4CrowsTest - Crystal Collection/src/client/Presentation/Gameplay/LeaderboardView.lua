@@ -72,6 +72,7 @@ function LeaderboardView:BindButton()
 
     self.closeButton.MouseButton1Click:Connect(function()
         self:ToggleLeaderboard(false)
+        self:DeleteAllEntry()
     end)
 end
 
@@ -85,10 +86,49 @@ function LeaderboardView:ToggleLeaderboard(isShow:boolean)
     self.leaderBoardFrame.Interactable = isShow
 end
 
-function LeaderboardView:AddEntry()
+-- Clones the RankFrame template into the entry container and fills it in.
+-- NOTE: adjust the FindFirstChild names below to match your RankFrame's
+-- actual label instances if they're named differently.
+function LeaderboardView:AddEntry(rank: number, name: string, score: number)
+    local entry = self.leaderboardEntryTemplate:Clone()
+    entry.Name = "RankEntry_" .. rank
+
+    local rankLabel = entry:FindFirstChild("RankLabel")
+    local nameLabel = entry:FindFirstChild("NameLabel")
+    local scoreLabel = entry:FindFirstChild("ScoreLabel")
+
+    if rankLabel then rankLabel.Text = tostring(rank) end
+    if nameLabel then nameLabel.Text = name end
+    if scoreLabel then scoreLabel.Text = tostring(score) end
+
+    entry.Parent = self.entryContainer
+    entry.Visible = true
+
+    return entry
 end
 
+-- Destroys every cloned entry currently sitting in the container.
+-- GuiObject filter naturally skips non-visual children like a UIListLayout.
 function LeaderboardView:DeleteAllEntry()
+    if not self.entryContainer then return end
+
+    for _, child in self.entryContainer:GetChildren() do
+        if child:IsA("GuiObject") then
+            child:Destroy()
+        end
+    end
+end
+
+-- Convenience entry point: clear old entries, populate with the given
+-- ranked players ({ Rank, Name, Score }), then reveal the panel.
+function LeaderboardView:ShowLeaderboard(topPlayers: { any })
+    self:DeleteAllEntry()
+
+    for _, entry in topPlayers do
+        self:AddEntry(entry.Rank, entry.Name, entry.Score)
+    end
+
+    self:ToggleLeaderboard(true)
 end
 
 return LeaderboardView

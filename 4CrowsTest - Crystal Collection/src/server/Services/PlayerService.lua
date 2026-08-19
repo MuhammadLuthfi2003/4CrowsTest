@@ -21,6 +21,22 @@ function PlayerService.Client:GetScore(player: Player)
 	return model and model.CurrentPoint or 0
 end
 
+function PlayerService.Client:GetTopPlayers(player: Player, count: number?)
+	local top = PlayerAdapter.GetTopPlayers(count or 3)
+	local result = {}
+
+	for rank, entry in top do
+		local topPlayer = Players:GetPlayerByUserId(entry.UserId)
+		table.insert(result, {
+			Rank = rank,
+			Name = topPlayer and topPlayer.Name or "Unknown",
+			Score = entry.Model.CurrentPoint,
+		})
+	end
+
+	return result
+end
+
 function PlayerService:KnitStart()
 	Players.PlayerAdded:Connect(function(player)
 		PlayerAdapter.AddPlayer(player)

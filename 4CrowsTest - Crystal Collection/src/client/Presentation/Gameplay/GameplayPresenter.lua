@@ -46,6 +46,15 @@ function GameplayPresenter:Init()
 		GameplayView:UpdateRound(self._round)
 	end))
 
+	-- show the leaderboard with the top 3 scorers once the match ends
+	self._trove:Add(MatchService.OnGameFinished:Connect(function()
+		PlayerService:GetTopPlayers(3):andThen(function(topPlayers)
+			LeaderboardView:ShowLeaderboard(topPlayers)
+		end):catch(function(err)
+			warn("Failed to fetch top players:", err)
+		end)
+	end))
+
 	-- score updates pushed from the server
 	self._trove:Add(PlayerService.ScoreChanged:Connect(function(newScore)
 		GameplayView:UpdateScore(newScore)
