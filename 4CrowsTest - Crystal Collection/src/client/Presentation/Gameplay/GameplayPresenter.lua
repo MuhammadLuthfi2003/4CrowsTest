@@ -40,12 +40,6 @@ function GameplayPresenter:Init()
 		self:_syncMatchState()
 	end))
 
-	-- round increments each time a game starts
-	self._trove:Add(MatchService.OnGameStarted:Connect(function()
-		self._round += 1
-		GameplayView:UpdateRound(self._round)
-	end))
-
 	-- show the leaderboard with the top 3 scorers once the match ends
 	self._trove:Add(MatchService.OnGameFinished:Connect(function()
 		PlayerService:GetTopPlayers(3):andThen(function(topPlayers)

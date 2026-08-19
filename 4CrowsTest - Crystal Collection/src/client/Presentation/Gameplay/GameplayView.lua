@@ -57,12 +57,6 @@ function GameplayView:Init()
 			error("StateText not found in StarterGUI.GameplayHUD.Timer")
 		end
 
-		-- round frame
-		self.roundText = self.scoreFrame:WaitForChild("RoundText",10)
-		if not self.roundText then
-			error("RoundText not found in StarterGUI.GameplayHUD.RoundUI")
-		end
-
 		self.scoreText = self.scoreFrame:WaitForChild("CurrentScore",10)
 		if not self.scoreText then
 			error("CurrentScore not found in StarterGUI.GameplayHUD.RoundUI")
@@ -106,12 +100,5 @@ function GameplayView:UpdateScore(newScore:number)
 	self.scoreText.Text = tostring(newScore)
 end
 
-function GameplayView:UpdateRound(newRound:number)
-	if not self.roundText then
-		warn("RoundText not found in StarterGUI.GameplayHUD.RoundUI")
-	end
-
-	self.roundText.Text = "Current Round: " .. tostring(newRound) 
-end
 
 return GameplayView

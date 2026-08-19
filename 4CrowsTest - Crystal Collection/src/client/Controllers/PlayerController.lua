@@ -16,7 +16,7 @@ local PlayerConfig = require(ReplicatedStorage.Shared.Domain.Player.PlayerConfig
 -- client-side prediction values only; server should be the source of truth
 -- for anything that affects gameplay outcomes (see note below)
 local DASH_SPEED_MULTIPLIER = PlayerConfig.DashMultiplier
-local DASH_DURATION = PlayerConfig.DashCooldown
+local DASH_DURATION = PlayerConfig.DashDuration
 
 local localPlayer = Players.LocalPlayer
 
