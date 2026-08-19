@@ -99,6 +99,12 @@ function PlayerAdapter.ResetScore(userId: number)
 	PlayerAdapter.ScoreChanged:Fire(userId, updated)
 end
 
+function PlayerAdapter.ResetAllScores()
+	for userId in players do
+		PlayerAdapter.ResetScore(userId)
+	end
+end
+
 function PlayerAdapter.TryDash(userId: number): boolean
 	local current = players[userId]
 	if not current then return false end

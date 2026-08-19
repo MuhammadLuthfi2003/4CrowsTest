@@ -56,6 +56,12 @@ function PlayerService:KnitStart()
 			self.Client.ScoreChanged:Fire(player, model.CurrentPoint)
 		end
 	end)
+
+	-- clear everyone's score right as the next match kicks off, so scores
+	-- stay visible on the leaderboard through the intermission
+	MatchAdapter.OnGameStarted:Connect(function()
+		PlayerAdapter.ResetAllScores()
+	end)
 end
 
 return PlayerService
