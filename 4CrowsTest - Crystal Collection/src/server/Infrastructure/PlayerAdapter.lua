@@ -30,6 +30,7 @@ function PlayerAdapter.Init()
 end
 
 function PlayerAdapter.AddPlayer(player: Player)
+	print("[PlayerAdapter] AddPlayer called for", player.UserId, player.Name)
 	local trove = Trove.new()
 	troves[player.UserId] = trove
 
@@ -60,7 +61,7 @@ function PlayerAdapter.AddScore(userId: number, crystalDef, match)
 	local current = players[userId]
 	if not current then return end
 
-	if not PlayerPolicy.CanAddScore(current, match) then return end
+	if not PlayerPolicy.CanAddScore(match) then return end
 
 	local updated = PlayerRules.AddScore(current, crystalDef)
 	players[userId] = updated

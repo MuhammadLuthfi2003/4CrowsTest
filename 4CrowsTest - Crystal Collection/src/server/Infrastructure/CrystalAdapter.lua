@@ -41,11 +41,14 @@ function CrystalAdapter.SpawnCrystal(cframe: CFrame, rarity: Types.CrystalRarity
 		local player = Players:GetPlayerFromCharacter(hit.Parent)
 		if not player then return end
 
+		print("[Crystal] touched by", player.Name)
+
 		local current = crystals[crystal.CrystalId]
 		if not current or not CrystalPolicy.CanCollect(current) then return end
 
 		crystals[crystal.CrystalId] = CrystalRules.MarkCollected(current)
 		CrystalAdapter.CrystalCollected:Fire(crystal.CrystalId, current.Rarity, player)
+		print("[Crystal] collected, rarity:", current.Rarity)
 		CrystalAdapter.RemoveCrystal(crystal.CrystalId)
 	end)
 

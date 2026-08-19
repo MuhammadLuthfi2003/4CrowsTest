@@ -38,7 +38,7 @@ function MatchAdapter.StartMatch()
 
         if match.State ~= previousState then
             match = MatchRules.ResetAllCrystals(match)
-            MatchAdapter.StateChanged:Fire()
+            MatchAdapter.StateChanged:Fire(match.State)
 
             if match.State == "Intermission" then
                 MatchAdapter.OnGameFinished:Fire()

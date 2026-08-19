@@ -12,6 +12,8 @@ local MatchDomain = ReplicatedStorage.Shared.Domain.Match
 local MatchPolicy = require(MatchDomain.MatchPolicy) -- or wherever these live relative to Service
 local MatchRules = require(MatchDomain.MatchRules)
 
+local Signal = require(ReplicatedStorage.Packages.Signal)
+
 local CrystalDomain = ReplicatedStorage.Shared.Domain.Crystal
 local CrystalDefinition = require(CrystalDomain.CrystalDefinition)
 
@@ -47,9 +49,9 @@ function CrystalService:KnitStart()
 		end
 	end)
 
-	-- The seam: a crystal being collected touches both Match and Player
 	CrystalAdapter.CrystalCollected:Connect(function(crystalId, rarity, player)
 		local crystalDef = CrystalDefinition[rarity]
+		print("[CrystalService] awarding score to", player.Name, "def:", crystalDef)
 		PlayerAdapter.AddScore(player.UserId, crystalDef, MatchAdapter.GetMatch())
 	end)
 

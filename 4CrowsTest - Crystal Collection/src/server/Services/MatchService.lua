@@ -9,8 +9,12 @@ local CrystalAdapter = require(Infrastructure.CrystalAdapter)
 local Players = game:GetService("Players")
 
 local MatchService = Knit.CreateService({
-	Name = "TemplateService",
-	Client = {},
+	Name = "MatchService",
+	Client = {
+		OnStateChanged = Knit.CreateSignal(),
+		OnGameStarted = Knit.CreateSignal(),
+		OnGameFinished = Knit.CreateSignal(),
+	},
     -- tracks player score
     playerScores = {},
 })
@@ -30,6 +34,18 @@ function MatchService:KnitStart()
 
 	CrystalAdapter.CrystalCollected:Connect(function(crystalId, rarity, player)
 		MatchAdapter.NotifyCrystalCollected()
+	end)
+
+	MatchAdapter.StateChanged:Connect(function(newState)
+		self.Client.OnStateChanged:FireAll(newState)
+	end)
+
+	MatchAdapter.OnGameFinished:Connect(function()
+		self.Client.OnGameFinished:FireAll()
+	end)
+
+	MatchAdapter.OnGameStarted:Connect(function()
+		self.Client.OnGameStarted:FireAll()
 	end)
 end
 
