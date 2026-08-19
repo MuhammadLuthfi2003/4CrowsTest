@@ -22,8 +22,6 @@ function PlayerService.Client:GetScore(player: Player)
 end
 
 function PlayerService:KnitStart()
-	local CrystalService = Knit.GetService("CrystalService")
-
 	Players.PlayerAdded:Connect(function(player)
 		PlayerAdapter.AddPlayer(player)
 	end)
@@ -42,11 +40,6 @@ function PlayerService:KnitStart()
 			self.Client.ScoreChanged:Fire(player, model.CurrentPoint)
 		end
 	end)
-
-	-- CrystalService.OnScoreAdded:Connect(function(crystalDef, player)
-	-- 	print("[CrystalService] awarding score to", player.Name, "def:", crystalDef)
-	-- 	PlayerAdapter.AddScore(player.UserId, crystalDef, MatchAdapter.GetMatch())
-	-- end)
 end
 
 return PlayerService

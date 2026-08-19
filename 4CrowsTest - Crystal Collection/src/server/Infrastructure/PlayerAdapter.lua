@@ -9,7 +9,9 @@ local PlayerFactory = require(PlayerDomain.PlayerFactory)
 local PlayerRules = require(PlayerDomain.PlayerRules)
 local PlayerPolicy = require(PlayerDomain.PlayerPolicy)
 
-local PlayerAdapter = {}
+local PlayerAdapter = {
+	DashUsed = Signal.new()
+}
 
 -- 1. Own the mutable state: one model + one Trove per userId
 local players: { [number]: any } = {}
